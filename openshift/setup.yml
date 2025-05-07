@@ -53,6 +53,34 @@ controller_templates:
     credentials:
       - "OpenShift Credential"
 
+  - name: OpenShift / CNV / Create Fedora VM
+    job_type: run
+    inventory: "Demo Inventory"
+    project: "Ansible Product Demos"
+    playbook: "openshift/cnv/fedoravm.yml"
+    notification_templates_started: Telemetry
+    notification_templates_success: Telemetry
+    notification_templates_error: Telemetry
+    survey_enabled: true
+    allow_simultaneous: true
+    survey:
+      name: ''
+      description: ''
+      spec:
+        - question_name: VM name
+          type: text
+          variable: vm_name
+          default: fedora
+          required: true
+        - question_name: VM NameSpace
+          type: text
+          variable: vm_namespace
+          default: openshift-cnv
+          required: true
+
+    credentials:
+      - "OpenShift Credential"
+      
   - name: OpenShift / CNV / Create RHEL VM
     job_type: run
     inventory: "Demo Inventory"
