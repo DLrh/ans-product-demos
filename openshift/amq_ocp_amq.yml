@@ -21,10 +21,10 @@
           metadata:
             labels:
               operators.coreos.com/amq.openshift-operators: ''
-            name: amq-broker-rhel8
+            name: Red Hat Integration - AMQ Broker for RHEL 8 (Multiarch)
             namespace: openshift-operators
           spec:
-            channel: stable
+            channel: 7.12.x
             installPlanApproval: Automatic
             name: amq-broker-rhel8
             source: redhat-operators
@@ -39,10 +39,10 @@
           metadata:
             labels:
               operators.coreos.com/keycloak.openshift-operators: ''
-            name: rhbk-operator
+            name: Red Hat build of Keycloak Operator
             namespace: openshift-operators
           spec:
-            channel: stable
+            channel: stable-v26
             installPlanApproval: Automatic
             name: rhbk-operator
             source: redhat-operators
