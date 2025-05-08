@@ -5,14 +5,7 @@
   gather_facts: false
 
   tasks:
-    - name: Create namespace
-      k8s:
-        name: artemis
-        api_version: v1
-        kind: Namespace
-        state: present
-
-    - name: Create AMQ Broker Operator Subscription
+    - name: Install AMQ Broker
       k8s:
         api_version: operators.coreos.com/v1alpha1
         kind: Subscription
@@ -21,8 +14,20 @@
           metadata:
             name: amq-broker-rhel8
           spec:
-            channel: 7.12.x
+            channel: '{{ operator_channel | default("7.12.x") }}'
             name: redhat-amq-broker
             source: redhat-operators
             sourceNamespace: openshift-marketplace
-
+      #  retries: 5  # Add retries if the Operator installation is flaky
+      #  delay: 10   # Wait between retries
+    - name: Wait for AMQ Broker Operator to be ready
+      k8s_info:
+        api_version: operators.coreos.com/v1alpha1
+        kind: ClusterServiceVersion
+        namespace: '{{ operator_namespace | default("openshift-operators") }}'
+        label_selectors:
+          - operators.coreos.com/redhat-amq-broker.{{ operator_namespace | default("openshift-operators") }} # corrected label selector
+      register: amq_operator_csv
+      until: amq_operator_csv.resources | map(attribute='status.phase') | list | first == "Succeeded"
+      retries: 30
+      delay: 10
