@@ -21,7 +21,7 @@
           metadata:
             labels:
               operators.coreos.com/amq.openshift-operators: ''
-            name: AMQ Broker for RHEL 8
+            name: amq broker for rhel 8
             namespace: openshift-operators
           spec:
             channel: 7.12.x
