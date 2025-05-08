@@ -12,21 +12,17 @@
         kind: Namespace
         state: present
 
-    - name: Create AMQ subscriptions
+    - name: Create AMQ Broker Operator Subscription
       redhat.openshift.k8s:
-        state: present
+        api_version: operators.coreos.com/v1alpha1
+        kind: Subscription
+        namespace: '{{ operator_namespace | default("openshift-operators") }}'
         definition:
-          apiVersion: operators.coreos.com/v1alpha1
-          kind: Subscription
           metadata:
-            labels:
-              operators.coreos.com/amq.openshift-operators: ''
             name: amq-broker-rhel8
-            namespace: openshift-operators
           spec:
-            channel: 7.12.x
-            installPlanApproval: Automatic
-            name: amq-broker-rhel8
+            channel: '{{ operator_channel | default("stable") }}'
+            name: redhat-amq-broker
             source: redhat-operators
             sourceNamespace: openshift-marketplace
 
