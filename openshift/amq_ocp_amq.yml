@@ -6,14 +6,14 @@
 
   tasks:
     - name: Create namespace
-      redhat.openshift.k8s:
+      k8s:
         name: artemis
         api_version: v1
         kind: Namespace
         state: present
 
     - name: Create AMQ Broker Operator Subscription
-      redhat.openshift.k8s:
+      k8s:
         api_version: operators.coreos.com/v1alpha1
         kind: Subscription
         namespace: '{{ operator_namespace | default("openshift-operators") }}'
