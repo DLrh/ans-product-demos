@@ -39,7 +39,7 @@
           metadata:
             labels:
               operators.coreos.com/keycloak.openshift-operators: ''
-            name: Red-Hat-build-of-Keycloak-Operator
+            name: red-hat-build-of-keycloak-operator
             namespace: openshift-operators
           spec:
             channel: stable-v26
