@@ -21,7 +21,7 @@
           metadata:
             name: amq-broker-rhel8
           spec:
-            channel: '{{ operator_channel | default("stable") }}'
+            channel: 7.12.x
             name: redhat-amq-broker
             source: redhat-operators
             sourceNamespace: openshift-marketplace
