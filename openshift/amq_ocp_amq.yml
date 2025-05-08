@@ -1,33 +1,67 @@
-
----
-- name: Deploy AMQ on OCP
+- name: Install AMQ Broker Operator on OpenShift in 'artemis' namespace
   hosts: localhost
-  gather_facts: false
+  gather_facts: no
+  collections:
+    - community.kubernetes
 
   tasks:
-    - name: Install AMQ Broker
+    - name: Create namespace for AMQ Broker Operator
+      k8s:
+        api_version: v1
+        kind: Namespace
+        name: artemis
+        state: present
+
+    - name: Create OperatorGroup for AMQ Broker
+      k8s:
+        api_version: operators.coreos.com/v1
+        kind: OperatorGroup
+        namespace: artemis
+        name: amq-broker-operatorgroup
+        definition:
+          apiVersion: operators.coreos.com/v1
+          kind: OperatorGroup
+          metadata:
+            name: amq-broker-operatorgroup
+            namespace: artemis
+          spec:
+            targetNamespaces:
+              - artemis
+
+    - name: Subscribe to AMQ Broker Operator
       k8s:
         api_version: operators.coreos.com/v1alpha1
         kind: Subscription
-        namespace: '{{ operator_namespace | default("openshift-operators") }}'
+        namespace: artemis
+        name: amq-broker
         definition:
+          apiVersion: operators.coreos.com/v1alpha1
+          kind: Subscription
           metadata:
-            name: amq-broker-rhel8
+            name: amq-broker
+            namespace: artemis
           spec:
-            channel: '{{ operator_channel | default("7.12.x") }}'
-            name: redhat-amq-broker
+            channel: 7.12.x
+            name: amq-broker-rhel8
             source: redhat-operators
             sourceNamespace: openshift-marketplace
-      #  retries: 5  # Add retries if the Operator installation is flaky
-      #  delay: 10   # Wait between retries
-    - name: Wait for AMQ Broker Operator to be ready
-      k8s_info:
-        api_version: operators.coreos.com/v1alpha1
-        kind: ClusterServiceVersion
-        namespace: '{{ operator_namespace | default("openshift-operators") }}'
-        label_selectors:
-          - operators.coreos.com/redhat-amq-broker.{{ operator_namespace | default("openshift-operators") }} # corrected label selector
-      register: amq_operator_csv
-      until: amq_operator_csv.resources | map(attribute='status.phase') | list | first == "Succeeded"
+
+    - name: Wait for AMQ Broker Operator CSV to be installed
       retries: 30
       delay: 10
+      until: csv_info.resources | length > 0 and (csv_info.resources[0].status.phase == 'Succeeded')
+      block:
+        - name: Get the installed CSV name from the subscription
+          k8s_info:
+            api_version: operators.coreos.com/v1alpha1
+            kind: Subscription
+            namespace: artemis
+            name: amq-broker
+          register: sub_info
+
+        - name: Extract CSV name from Subscription status
+          set_fact:
+            csv_name: "{{ sub_info.resources[0].status.installedCSV | default('') }}"
+
+        - name: Get status of the installed CSV
+
