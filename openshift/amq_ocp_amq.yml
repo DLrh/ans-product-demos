@@ -1,0 +1,49 @@
+
+---
+- name: Deploy AMQ on OCP
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Create namespace
+      redhat.openshift.k8s:
+        name: artemis
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Create AMQ subscriptions
+      redhat.openshift.k8s:
+        state: present
+        definition:
+          apiVersion: operators.coreos.com/v1alpha1
+          kind: Subscription
+          metadata:
+            labels:
+              operators.coreos.com/amq.openshift-operators: ''
+            name: amq-broker-rhel8
+            namespace: openshift-operators
+          spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: amq-broker-rhel8
+            source: redhat-operators
+            sourceNamespace: openshift-marketplace
+
+    - name: Create Keycloak subscriptions
+      redhat.openshift.k8s:
+        state: present
+        definition:
+          apiVersion: operators.coreos.com/v1alpha1
+          kind: Subscription
+          metadata:
+            labels:
+              operators.coreos.com/keycloak.openshift-operators: ''
+            name: rhbk-operator
+            namespace: openshift-operators
+          spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: rhbk-operator
+            source: redhat-operators
+            sourceNamespace: openshift-marketplace
