@@ -46,22 +46,5 @@
             source: redhat-operators
             sourceNamespace: openshift-marketplace
 
-    - name: Wait for AMQ Broker Operator CSV to be installed
-      retries: 30
-      delay: 10
-      until: csv_info.resources | length > 0 and (csv_info.resources[0].status.phase == 'Succeeded')
-      block:
-        - name: Get the installed CSV name from the subscription
-          k8s_info:
-            api_version: operators.coreos.com/v1alpha1
-            kind: Subscription
-            namespace: artemis
-            name: amq-broker
-          register: sub_info
 
-        - name: Extract CSV name from Subscription status
-          set_fact:
-            csv_name: "{{ sub_info.resources[0].status.installedCSV | default('') }}"
-
-        - name: Get status of the installed CSV
 
