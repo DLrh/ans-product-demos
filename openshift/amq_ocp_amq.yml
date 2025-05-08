@@ -21,7 +21,7 @@
           metadata:
             labels:
               operators.coreos.com/amq.openshift-operators: ''
-            name: amq broker for rhel 8 multiarch
+            name: AMQ-broker-for-rhel-8-multiarch
             namespace: openshift-operators
           spec:
             channel: 7.12.x
@@ -39,7 +39,7 @@
           metadata:
             labels:
               operators.coreos.com/keycloak.openshift-operators: ''
-            name: Red Hat build of Keycloak Operator
+            name: Red-Hat-build-of-Keycloak-Operator
             namespace: openshift-operators
           spec:
             channel: stable-v26
