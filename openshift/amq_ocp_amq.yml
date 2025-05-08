@@ -30,6 +30,19 @@
             source: redhat-operators
             sourceNamespace: openshift-marketplace
 
+    - name: Create Operator OperatorGroup
+      redhat.openshift.k8s:
+        state: present
+        definition:
+          apiVersion: operators.coreos.com/v1
+          kind: OperatorGroup
+          metadata:
+            name: keycloak
+            namespace: openshift-operators
+          spec:
+            targetNamespaces:
+            - artemis
+
     - name: Create Keycloak subscriptions
       redhat.openshift.k8s:
         state: present
@@ -47,4 +60,4 @@
             name: rhbk-operator
             source: redhat-operators
             sourceNamespace: openshift-marketplace
-            targetNamespaces: artemis
+            
