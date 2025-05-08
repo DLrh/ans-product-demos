@@ -40,10 +40,11 @@
             labels:
               operators.coreos.com/keycloak.openshift-operators: ''
             name: red-hat-build-of-keycloak-operator
-            namespace: artemis
+            namespace: openshift-operators
           spec:
             channel: stable-v26
             installPlanApproval: Automatic
             name: rhbk-operator
             source: redhat-operators
             sourceNamespace: openshift-marketplace
+            targetNamespaces: artemis
